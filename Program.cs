@@ -8,6 +8,14 @@ namespace SharpEngine
 {
     class Program
     {
+        static float[] vertices = new float[] {
+            // vertex 1 x, y, z
+            -.5f, -.5f, 0f,
+            // vertex 2 x, y, z
+            .5f, -.5f, 0f,
+            // vertex 3 x, y, z
+            0f, .5f, 0f
+        };
         static void Main(string[] args)
         {
             var window = CreateWindow();
@@ -17,11 +25,16 @@ namespace SharpEngine
             CreateShaderProgram();
 
 
-            while (!Glfw.WindowShouldClose(window))
-            {
-                Glfw.PollEvents();
-                glDrawArrays(GL_TRIANGLES,0,3);
+            while (!Glfw.WindowShouldClose(window)) {
+                Glfw.PollEvents(); // react to window changes (position etc.)
+                glClearColor(.2f, .05f, .2f, 1);
+                glClear(GL_COLOR_BUFFER_BIT);
+                glDrawArrays(GL_TRIANGLES, 0, 3);
                 glFlush();
+                vertices[0] += 0.001f;
+                vertices[3] += 0.001f;
+                vertices[6] += 0.001f;
+                UpdateTriangleBuffer();
             }
         }
 
@@ -84,6 +97,11 @@ namespace SharpEngine
             Import(Glfw.GetProcAddress);
             return window;
 
+        }
+        static unsafe void UpdateTriangleBuffer() {
+            fixed (float* vertex = &vertices[0]) {
+                glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices.Length, vertex, GL_STATIC_DRAW);
+            }
         }
     }
 }
