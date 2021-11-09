@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using GLFW;
 using OpenGL;
 using static OpenGL.Gl;
@@ -10,13 +11,14 @@ namespace SharpEngine
         static void Main(string[] args)
         {
             Glfw.Init();
-            // Glfw.WindowHint(Hint.ClientApi, ClientApi.OpenGL);
-            // Glfw.WindowHint(Hint.ContextVersionMajor, 3);
-            // Glfw.WindowHint(Hint.ContextVersionMinor, 3);
-            // Glfw.WindowHint(Hint.Decorated, true);
-            // Glfw.WindowHint(Hint.OpenglProfile, Profile.Core);
-            // Glfw.WindowHint(Hint.OpenglForwardCompatible, Constants.True);
+            Glfw.WindowHint(Hint.ClientApi, ClientApi.OpenGL);
+            Glfw.WindowHint(Hint.ContextVersionMajor, 3);
+            Glfw.WindowHint(Hint.ContextVersionMinor, 3);
+            Glfw.WindowHint(Hint.Decorated, true);
+            Glfw.WindowHint(Hint.OpenglProfile, Profile.Core);
+            Glfw.WindowHint(Hint.OpenglForwardCompatible, Constants.True);
             Glfw.WindowHint(Hint.Doublebuffer, Constants.False);
+            
             var window = Glfw.CreateWindow(1024,768, "SharpEngine", Monitor.None, Window.None);
             Glfw.MakeContextCurrent(window);
             Import(Glfw.GetProcAddress);
@@ -42,32 +44,13 @@ namespace SharpEngine
             }
             glEnableVertexAttribArray(0);
             
-            string vertexShaderSource = @"
-    #version 33core
-    in vec3 pos;
-    void Main()
-    {
-        gl_Position= vec4(pos.x , pos.y, pos.z , 1.0);
-    {
-
-";
-
-
-            string fragmentShaderSource = @"
-    #version 33core
-    out vec4 result;
-    void main()
-    {
-        result= vec4(1, 0 , 0 , 1);
-    }
-
-";
+            
             var vertexShader = glCreateShader(GL_VERTEX_SHADER);
-            glShaderSource(vertexShader, vertexShaderSource);
+            glShaderSource(vertexShader, File.ReadAllText("shaders/red-triangle.vert"));
             glCompileShader(vertexShader);
 
-            var fragmentShader = glCreateShader(GL_VERTEX_SHADER);
-            glShaderSource(fragmentShader, fragmentShaderSource);
+            var fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+            glShaderSource(fragmentShader, File.ReadAllText("shaders/change-triangle.vert"));
             glCompileShader(fragmentShader);
             
             // create shader program- rendering pipeline.
