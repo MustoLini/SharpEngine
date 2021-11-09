@@ -50,7 +50,7 @@ namespace SharpEngine
             glCompileShader(vertexShader);
 
             var fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-            glShaderSource(fragmentShader, File.ReadAllText("shaders/change-triangle.vert"));
+            glShaderSource(fragmentShader, File.ReadAllText("shaders/change-triangle.frag"));
             glCompileShader(fragmentShader);
             
             // create shader program- rendering pipeline.
