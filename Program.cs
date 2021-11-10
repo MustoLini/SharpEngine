@@ -16,6 +16,12 @@ namespace SharpEngine
             // vertex 3 x, y, z
             0f, .5f, 0f
         };
+
+        private const int vertexX = 0;
+        private const int vertexSize = 3;
+        private const int vertexY = 1;
+        
+        
         static void Main(string[] args)
         {
             var window = CreateWindow();
@@ -27,21 +33,27 @@ namespace SharpEngine
 
             while (!Glfw.WindowShouldClose(window)) {
                 Glfw.PollEvents(); // react to window changes (position etc.)
-                glClearColor(.2f, .05f, .2f, 1);
-                glClear(GL_COLOR_BUFFER_BIT);
-                glDrawArrays(GL_TRIANGLES, 0, 3);
-                glFlush();
-                
-                if (vertices[7]>0)
+                ClearScreen();
+                Render();
+
+                for (int i = vertexY; i < vertices.Length; i+= vertexSize)
                 {
-                    vertices[0] += 0.0001f;
-                    vertices[1] += 0.0001f;
-                    vertices[3] -= 0.0001f;
-                    vertices[4] += 0.0001f;
-                    vertices[7] -= 0.0001f;
+                    vertices[i] -= 0.0001f;
                 }
                 UpdateTriangleBuffer();
             }
+        }
+
+        private static void Render()
+        {
+            glDrawArrays(GL_TRIANGLES, 0, vertices.Length/vertexSize);
+            glFlush();
+        }
+
+        private static void ClearScreen()
+        {
+            glClearColor(.2f, .05f, .2f, 1);
+            glClear(GL_COLOR_BUFFER_BIT);
         }
 
         private static unsafe void LoadTriangleIntoBuffer()
@@ -64,7 +76,7 @@ namespace SharpEngine
                     glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertites.Length, vertex, GL_STATIC_DRAW);
                 }
 
-                glVertexAttribPointer(0, 3, GL_FLOAT, false, 3 * sizeof(float), NULL);
+                glVertexAttribPointer(0, vertexSize, GL_FLOAT, false, vertexSize * sizeof(float), NULL);
             }
 
             glEnableVertexAttribArray(0);
@@ -73,11 +85,11 @@ namespace SharpEngine
         private static void CreateShaderProgram()
         {
             var vertexShader = glCreateShader(GL_VERTEX_SHADER);
-            glShaderSource(vertexShader, File.ReadAllText("shaders/red-triangle.vert"));
+            glShaderSource(vertexShader, File.ReadAllText("shaders/screen-coordinates.vert"));
             glCompileShader(vertexShader);
 
             var fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-            glShaderSource(fragmentShader, File.ReadAllText("shaders/change-triangle.frag"));
+            glShaderSource(fragmentShader, File.ReadAllText("shaders/green.frag"));
             glCompileShader(fragmentShader);
 
             // create shader program- rendering pipeline.
