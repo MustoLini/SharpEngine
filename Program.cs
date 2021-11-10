@@ -44,7 +44,7 @@ namespace SharpEngine
 
         };
 
-
+        private static bool test;
         private const int vertexSize = 3;
 
         
@@ -62,14 +62,36 @@ namespace SharpEngine
                 Glfw.PollEvents(); // react to window changes (position etc.)
                 ClearScreen();
                 Render(window);
-
-                for (int i = 0; i < vertices.Length; i++)
+                if (test==false)
                 {
-                    vertices[i].x += 0.0001f;
-                    vertices[i].y += 0.0001f;
+                    for (int i = 0; i < vertices.Length; i++)
+                    {
+                        vertices[i].x += 0.0001f;
+                        vertices[i].y += 0.0001f;
+                        
+                        if (vertices[1].x >= 1f)
+                        {
+                            test = true;
+                        }
+                        
+                        
+                    }
                     
-
                 }
+                else
+                {
+                    for (int i = 0; i < vertices.Length; i++)
+                    {
+                        vertices[i].x -= 0.0001f;
+                        vertices[i].y -= 0.0001f;
+                        
+                        if (vertices[0].x <= -1f)
+                        {
+                            test = false;
+                        }
+                    }
+                }
+                
                 UpdateTriangleBuffer();
             }
         }
@@ -141,5 +163,7 @@ namespace SharpEngine
                 glBufferData(GL_ARRAY_BUFFER, sizeof(Vector) * vertices.Length, vertex, GL_STATIC_DRAW);
             }
         }
+
+        
     }
 }
