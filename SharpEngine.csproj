@@ -26,7 +26,7 @@
     <None Update="shaders\red.frag">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="shaders\green.frag">
+    <None Update="shaders\Green-triangle.frag">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
