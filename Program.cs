@@ -29,6 +29,9 @@ namespace SharpEngine
         {
             return new Vector(v.x * f, v.y * f, v.z * f);
         }
+        public static Vector operator +(Vector lhs, Vector rhs) {
+            return new Vector(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z);
+        }
     }
     
     class Program
@@ -47,10 +50,11 @@ namespace SharpEngine
         private static bool test;
         private const int vertexSize = 3;
 
-        
-        
+
+
         static void Main(string[] args)
         {
+            
             var window = CreateWindow();
 
             LoadTriangleIntoBuffer();
@@ -58,40 +62,49 @@ namespace SharpEngine
             CreateShaderProgram();
 
 
-            while (!Glfw.WindowShouldClose(window)) {
+            var direction = new Vector(0.0003f, 0.0003f);
+            var multip = 0.9999f;
+            float scale = 1f;
+            while (!Glfw.WindowShouldClose(window))
+            {
                 Glfw.PollEvents(); // react to window changes (position etc.)
                 ClearScreen();
                 Render(window);
-                if (test==false)
+                for (var i = 0; i < vertices.Length; i++)
                 {
-                    for (int i = 0; i < vertices.Length; i++)
-                    {
-                        vertices[i].x += 0.0001f;
-                        vertices[i].y += 0.0001f;
-                        
-                        if (vertices[1].x >= 1f)
-                        {
-                            test = true;
-                        }
-                        
-                        
-                    }
-                    
+                    vertices[i] += direction;
                 }
-                else
+
+                var min = vertices[0];
+                for (var i = 0; i < vertices.Length; i++)
                 {
-                    for (int i = 0; i < vertices.Length; i++)
+                    vertices[i] *= multip;
+                }
+
+                scale *= multip;
+                if (scale<=0.5)
+                {
+                    multip = 1.0001f;
+                }
+
+                for (var i = 0; i < vertices.Length; i++)
+                {
+                    if (vertices[i].x >= 1 || vertices[i].x <= -1)
                     {
-                        vertices[i].x -= 0.0001f;
-                        vertices[i].y -= 0.0001f;
-                        
-                        if (vertices[0].x <= -1f)
-                        {
-                            test = false;
-                        }
+                        direction.x *= -1;
+                        break;
                     }
                 }
-                
+
+                for (var i = 0; i < vertices.Length; i++)
+                {
+                    if (vertices[i].y >= 1 || vertices[i].y <= -1)
+                    {
+                        direction.y *= -1;
+                        break;
+                    }
+                }
+
                 UpdateTriangleBuffer();
             }
         }
@@ -162,6 +175,12 @@ namespace SharpEngine
             fixed (Vector* vertex = &vertices[0]) {
                 glBufferData(GL_ARRAY_BUFFER, sizeof(Vector) * vertices.Length, vertex, GL_STATIC_DRAW);
             }
+        }
+        public static Vector Max(Vector a, Vector b) {
+            return new Vector(MathF.Max(a.x, b.x), MathF.Max(a.y, b.y), MathF.Max(a.z, b.z));
+        }
+        public static Vector Min(Vector a, Vector b) {
+            return new Vector(MathF.Min(a.x, b.x), MathF.Min(a.y, b.y), MathF.Min(a.z, b.z));
         }
 
         
