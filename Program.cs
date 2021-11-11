@@ -7,13 +7,7 @@ namespace SharpEngine
 {
     class Program
     {
-        public struct Vertex {
-            public Vector position;
-
-            public Vertex(Vector position) {
-                this.position = position;
-            }
-        }
+        
 
         // static Vector[] vertices = new Vector[] {
         //     new Vector(-.1f, -.1f),
@@ -26,9 +20,9 @@ namespace SharpEngine
         //
         // };
         static Vertex[] vertices = new Vertex[] {
-            new Vertex(new Vector(0f, 0f)),
-            new Vertex(new Vector(1f, 0f)),
-            new Vertex(new Vector(0f, 1f))
+            new Vertex(new Vector(0f, 0f), Color.Red ),
+            new Vertex(new Vector(1f, 0f), Color.Green),
+            new Vertex(new Vector(0f, 1f), Color.Blue)
         };
 
         private static bool test;
@@ -137,19 +131,21 @@ namespace SharpEngine
 
             UpdateTriangleBuffer();
 
-            glVertexAttribPointer(0, 3, GL_FLOAT, false, vertexSize * sizeof(float), null);
+            glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(Vertex), null);
+            glVertexAttribPointer(1, 4, GL_FLOAT, false, sizeof(Vertex), (void*)sizeof(Vector));
 
             glEnableVertexAttribArray(0);
+            glEnableVertexAttribArray(1);
         }
 
         private static void CreateShaderProgram()
         {
             var vertexShader = glCreateShader(GL_VERTEX_SHADER);
-            glShaderSource(vertexShader, File.ReadAllText("shaders/screen-coordinates.vert"));
+            glShaderSource(vertexShader, File.ReadAllText("shaders/position-color.vert"));
             glCompileShader(vertexShader);
 
             var fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-            glShaderSource(fragmentShader, File.ReadAllText("shaders/green-triangle.frag"));
+            glShaderSource(fragmentShader, File.ReadAllText("shaders/vertex-color.frag"));
             glCompileShader(fragmentShader);
 
             // create shader program- rendering pipeline.
