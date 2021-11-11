@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Runtime.InteropServices;
 using GLFW;
 using OpenGL;
 using static OpenGL.Gl;
@@ -8,22 +9,14 @@ namespace SharpEngine
     class Program
     {
         
-
-        // static Vector[] vertices = new Vector[] {
-        //     new Vector(-.1f, -.1f),
-        //     new Vector(.1f, -.1f),
-        //     new Vector(0f, .1f),
-        //     
-        //     new Vector(.4f, .4f),
-        //     new Vector(.6f, .4f),
-        //     new Vector(.5f, .6f),
-        //
-        // };
-        static Vertex[] vertices = new Vertex[] {
-            new Vertex(new Vector(0f, 0f), Color.Red ),
-            new Vertex(new Vector(1f, 0f), Color.Green),
-            new Vertex(new Vector(0f, 1f), Color.Blue)
-        };
+        private static Triangle triangle= new Triangle ( new Vertex[]
+        
+            {
+                new Vertex(new Vector(0f, 0f), Color.Red),
+                new Vertex(new Vector(1f, 0f), Color.Green),
+                new Vertex(new Vector(0f, 1f), Color.Blue)
+            }
+        );
 
         private static bool test;
         private const int vertexSize = 3;
@@ -42,76 +35,40 @@ namespace SharpEngine
 
             var direction = new Vector(0.0003f, 0.0003f);
             var multip = 0.9999f;
-            float scale = 1f;
+            
             while (!Glfw.WindowShouldClose(window))
             {
                 Glfw.PollEvents(); // react to window changes (position etc.)
                 ClearScreen();
                 Render(window);
-                // 1. Scale the Triangle without Moving it
-                
-                // 1.1 Move the Triangle to the Center, so we can scale it without Side Effects
-                // 1.1.1 Find the Center of the Triangle
-                // 1.1.1.1 Find the Minimum and Maximum
-                var min = vertices[0].position;
-                for (var i = 1; i < vertices.Length; i++) {
-                    min = Vector.Min(min, vertices[i].position);
-                }
-                var max = vertices[0].position;
-                for (var i = 1; i < vertices.Length; i++) {
-                    max = Vector.Max(max, vertices[i].position);
-                }
-                // 1.1.1.2 Average out the Minimum and Maximum to get the Center
-                var center = (min + max) / 2;
-                // 1.1.2 Move the Triangle the Center
-                for (var i = 0; i < vertices.Length; i++) {
-                    vertices[i].position -= center;
-                }
-                // 1.2 Scale the Triangle
-                for (var i = 0; i < vertices.Length; i++) {
-                    vertices[i].position *= multip;
-                }
-                // 1.3 Move the Triangle Back to where it was before
-                for (var i = 0; i < vertices.Length; i++) {
-                    vertices[i].position += center;
-                }
-                
+                triangle.scale(multip);
                 // 2. Keep track of the Scale, so we can reverse it
-                scale *= multip;
-                if (scale <= 0.5f) {
-                    multip = 1.001f;
+                
+                if (triangle.currentScale <= 0.5f) {
+                    multip = 1.0001f;
                 }
-                if (scale >= 1f) {
+                if (triangle.currentScale >= 1f) {
                     multip = 0.9999f;
                 }
                 
-                for (var i = 0; i < vertices.Length; i++) {
-                    vertices[i].position += direction;
-                }
+                triangle.Move(direction);
                 // 4. Check the X-Bounds of the Screen
-                for (var i = 0; i < vertices.Length; i++) {
-                    if (vertices[i].position.x>= 1 && direction.x > 0 || vertices[i].position.x <= -1 && direction.x < 0) {
-                        direction.x *= -1;
-                        break;
-                    }
+                if (triangle.GetMaxBound().x >= 1 && direction.x > 0 || triangle.GetMinBound().x <= -1 && direction.x < 0) {
+                    direction.x *= -1;
+                }
+                
+                // 5. Check the Y-Bounds of the Screen
+                if (triangle.GetMaxBound().y >= 1 && direction.y > 0 || triangle.GetMinBound().y <= -1 && direction.y < 0) {
+                    direction.y *= -1;
                 }
 
-                for (var i = 0; i < vertices.Length; i++)
-                {
-                    if (vertices[i].position.y >= 1 && direction.y > 0 || vertices[i].position.y <= -1 && direction.y < 0)
-                    {
-                        direction.y *= -1;
-                        break;
-                    }
-                }
-
-                UpdateTriangleBuffer();
+                
             }
         }
 
         private static void Render(Window window)
         {
-            glDrawArrays(GL_TRIANGLES, 0, vertices.Length);
+            triangle.Render();
             Glfw.SwapBuffers(window);
             // glFlush();
         }
@@ -129,10 +86,10 @@ namespace SharpEngine
             glBindVertexArray(vertexArray);
             glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
 
-            UpdateTriangleBuffer();
+            
 
-            glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(Vertex), null);
-            glVertexAttribPointer(1, 4, GL_FLOAT, false, sizeof(Vertex), (void*)sizeof(Vector));
+            glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(Vertex), Marshal.OffsetOf(typeof(Vertex), nameof(Vertex.position)));
+            glVertexAttribPointer(1, 4, GL_FLOAT, false, sizeof(Vertex), Marshal.OffsetOf(typeof(Vertex), nameof(Vertex.Color)));
 
             glEnableVertexAttribArray(0);
             glEnableVertexAttribArray(1);
@@ -173,11 +130,7 @@ namespace SharpEngine
             return window;
 
         }
-        static unsafe void UpdateTriangleBuffer() {
-            fixed (Vertex* vertex = &vertices[0]) {
-                glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertices.Length, vertex, GL_STATIC_DRAW);
-            }
-        }
+       
        
 
         
