@@ -17,6 +17,14 @@ namespace SharpEngine
                 new Vertex(new Vector(0f, 1f), Color.Blue)
             }
         );
+        private static Triangle triangle2= new Triangle ( new Vertex[]
+        
+            {
+                new Vertex(new Vector(0f, 0f), Color.Red),
+                new Vertex(new Vector(1f, 0f), Color.Green),
+                new Vertex(new Vector(0f, 1f), Color.Blue)
+            }
+        );
 
         private static bool test;
         private const int vertexSize = 3;
@@ -27,8 +35,7 @@ namespace SharpEngine
         {
             
             var window = CreateWindow();
-
-            LoadTriangleIntoBuffer();
+            
 
             CreateShaderProgram();
 
@@ -42,6 +49,7 @@ namespace SharpEngine
                 ClearScreen();
                 Render(window);
                 triangle.scale(multip);
+                triangle2.scale(multip);
                 // 2. Keep track of the Scale, so we can reverse it
                 
                 if (triangle.currentScale <= 0.5f) {
@@ -52,6 +60,7 @@ namespace SharpEngine
                 }
                 
                 triangle.Move(direction);
+                triangle2.Move(direction);
                 // 4. Check the X-Bounds of the Screen
                 if (triangle.GetMaxBound().x >= 1 && direction.x > 0 || triangle.GetMinBound().x <= -1 && direction.x < 0) {
                     direction.x *= -1;
@@ -69,6 +78,7 @@ namespace SharpEngine
         private static void Render(Window window)
         {
             triangle.Render();
+            triangle2.Render();
             Glfw.SwapBuffers(window);
             // glFlush();
         }
@@ -79,21 +89,7 @@ namespace SharpEngine
             glClear(GL_COLOR_BUFFER_BIT);
         }
 
-        private static unsafe void LoadTriangleIntoBuffer()
-        {
-            var vertexArray = glGenVertexArray();
-            var vertexBuffer = glGenBuffer();
-            glBindVertexArray(vertexArray);
-            glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-
-            
-
-            glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(Vertex), Marshal.OffsetOf(typeof(Vertex), nameof(Vertex.position)));
-            glVertexAttribPointer(1, 4, GL_FLOAT, false, sizeof(Vertex), Marshal.OffsetOf(typeof(Vertex), nameof(Vertex.Color)));
-
-            glEnableVertexAttribArray(0);
-            glEnableVertexAttribArray(1);
-        }
+        
 
         private static void CreateShaderProgram()
         {
