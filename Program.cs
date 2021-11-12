@@ -10,7 +10,7 @@ namespace SharpEngine
     class Program
     {
         
-        private static Shapes _shapes= new Shapes ( new Vertex[]
+        private static Shapes triangle= new Shapes ( new Vertex[]
         
             {
                 new Vertex(new Vector(0f, 0f), Color.Red),
@@ -50,25 +50,25 @@ namespace SharpEngine
                 Glfw.PollEvents(); // react to window changes (position etc.)
                 ClearScreen();
                 Render(window);
-                _shapes.scale(multip);
+                triangle.scale(multip);
                 triangle2.scale(multip);
                 // 2. Keep track of the Scale, so we can reverse it
                 
-                if (_shapes.currentScale <= 0.5f) {
+                if (triangle.currentScale <= 0.5f) {
                     multip = 1.0001f;
                 }
-                if (_shapes.currentScale >= 1f) {
+                if (triangle.currentScale >= 1f) {
                     multip = 0.9999f;
                 }
                 
-                _shapes.Move(direction);
+                triangle.Move(direction);
                 triangle2.Move(direction2);
               
-                if (_shapes.GetMaxBound().x >= 1 && direction.x > 0 || _shapes.GetMinBound().x <= -1 && direction.x < 0) {
+                if (triangle.GetMaxBound().x >= 1 && direction.x > 0 || triangle.GetMinBound().x <= -1 && direction.x < 0) {
                     direction.x *= -1;
                 }
                 
-                if (_shapes.GetMaxBound().y >= 1 && direction.y > 0 || _shapes.GetMinBound().y <= -1 && direction.y < 0) {
+                if (triangle.GetMaxBound().y >= 1 && direction.y > 0 || triangle.GetMinBound().y <= -1 && direction.y < 0) {
                     direction.y *= -1;
                 }
                 
@@ -79,7 +79,7 @@ namespace SharpEngine
                 if (triangle2.GetMaxBound().y >= 1 && direction2.y > 0 || triangle2.GetMinBound().y <= -1 && direction2.y < 0) {
                     direction2.y *= -1;
                 }
-                _shapes.Rotation();
+                triangle.Rotation();
                 triangle2.Rotation();
 
 
@@ -88,7 +88,7 @@ namespace SharpEngine
 
         private static void Render(Window window)
         {
-            _shapes.Render();
+            triangle.Render();
             triangle2.Render();
             Glfw.SwapBuffers(window);
             // glFlush();
