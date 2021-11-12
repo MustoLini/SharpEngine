@@ -79,6 +79,8 @@ namespace SharpEngine
                 if (triangle2.GetMaxBound().y >= 1 && direction2.y > 0 || triangle2.GetMinBound().y <= -1 && direction2.y < 0) {
                     direction2.y *= -1;
                 }
+                _shapes.Rotation();
+                triangle2.Rotation();
 
 
             }
