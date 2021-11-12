@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Runtime.InteropServices;
 using GLFW;
 using OpenGL;
@@ -9,7 +10,7 @@ namespace SharpEngine
     class Program
     {
         
-        private static Triangle triangle= new Triangle ( new Vertex[]
+        private static Shapes _shapes= new Shapes ( new Vertex[]
         
             {
                 new Vertex(new Vector(0f, 0f), Color.Red),
@@ -17,12 +18,12 @@ namespace SharpEngine
                 new Vertex(new Vector(0f, 1f), Color.Blue)
             }
         );
-        private static Triangle triangle2= new Triangle ( new Vertex[]
+        private static Shapes triangle2= new Shapes ( new Vertex[]
         
             {
                 new Vertex(new Vector(0f, 0f), Color.Red),
-                new Vertex(new Vector(1f, 0f), Color.Green),
-                new Vertex(new Vector(0f, 1f), Color.Blue)
+                new Vertex(new Vector(0.5f, 0f), Color.Green),
+                new Vertex(new Vector(0f, 0.5f), Color.Blue)
             }
         );
 
@@ -41,6 +42,7 @@ namespace SharpEngine
 
 
             var direction = new Vector(0.0003f, 0.0003f);
+            var direction2 = new Vector(0.0004f, 0.0004f);
             var multip = 0.9999f;
             
             while (!Glfw.WindowShouldClose(window))
@@ -48,36 +50,43 @@ namespace SharpEngine
                 Glfw.PollEvents(); // react to window changes (position etc.)
                 ClearScreen();
                 Render(window);
-                triangle.scale(multip);
+                _shapes.scale(multip);
                 triangle2.scale(multip);
                 // 2. Keep track of the Scale, so we can reverse it
                 
-                if (triangle.currentScale <= 0.5f) {
+                if (_shapes.currentScale <= 0.5f) {
                     multip = 1.0001f;
                 }
-                if (triangle.currentScale >= 1f) {
+                if (_shapes.currentScale >= 1f) {
                     multip = 0.9999f;
                 }
                 
-                triangle.Move(direction);
-                triangle2.Move(direction);
-                // 4. Check the X-Bounds of the Screen
-                if (triangle.GetMaxBound().x >= 1 && direction.x > 0 || triangle.GetMinBound().x <= -1 && direction.x < 0) {
+                _shapes.Move(direction);
+                triangle2.Move(direction2);
+              
+                if (_shapes.GetMaxBound().x >= 1 && direction.x > 0 || _shapes.GetMinBound().x <= -1 && direction.x < 0) {
                     direction.x *= -1;
                 }
                 
-                // 5. Check the Y-Bounds of the Screen
-                if (triangle.GetMaxBound().y >= 1 && direction.y > 0 || triangle.GetMinBound().y <= -1 && direction.y < 0) {
+                if (_shapes.GetMaxBound().y >= 1 && direction.y > 0 || _shapes.GetMinBound().y <= -1 && direction.y < 0) {
                     direction.y *= -1;
                 }
-
                 
+                if (triangle2.GetMaxBound().x >= 1 && direction2.x > 0 || triangle2.GetMinBound().x <= -1 && direction2.x < 0) {
+                    direction2.x *= -1;
+                }
+                
+                if (triangle2.GetMaxBound().y >= 1 && direction2.y > 0 || triangle2.GetMinBound().y <= -1 && direction2.y < 0) {
+                    direction2.y *= -1;
+                }
+
+
             }
         }
 
         private static void Render(Window window)
         {
-            triangle.Render();
+            _shapes.Render();
             triangle2.Render();
             Glfw.SwapBuffers(window);
             // glFlush();

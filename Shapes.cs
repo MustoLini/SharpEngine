@@ -1,27 +1,29 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 using OpenGL;
 using static OpenGL.Gl;
 
 namespace SharpEngine
 {
-    public class Triangle
+    public class Shapes
     {
         private Vertex[] vertices;
         public float currentScale { get; private set; }
-        public Triangle(Vertex[] vertices)
+        public Shapes(Vertex[] vertices)
         {
             this.vertices = vertices;
             currentScale = 1f;
             LoadTriangleIntoBuffer();
         }
 
+        public Vector GetCenter()
+        {
+            return (GetMinBound() + GetMaxBound()) / 2;         
+        }
         public void scale(float multip)
         {
-            
-            var min = GetMinBound();
-            var max = GetMaxBound();
-            
-            var center = (min + max) / 2;
+
+            var center = GetCenter();
             
             Move(center*-1);
             
@@ -62,6 +64,8 @@ namespace SharpEngine
             {
                 vertices[i].position += direction;
             }
+
+            // center += direction;
         }
         public unsafe void Render() {
             fixed (Vertex* vertex = &vertices[0]) {
@@ -81,6 +85,16 @@ namespace SharpEngine
 
             glEnableVertexAttribArray(0);
             glEnableVertexAttribArray(1);
+        }
+
+        public void Rotation()
+        {
+            for (int i = 0; i < vertices.Length; i++)
+            {
+                var center = GetCenter();
+                Vector position = vertices[i].position;
+                double angle = Math.Atan2(position.y, position.x);
+            }
         }
     }
 }
