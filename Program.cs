@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Channels;
+using GLFW;
 
 namespace SharpEngine
 {
@@ -20,8 +22,8 @@ namespace SharpEngine
                     new Vertex(new Vector(.1f, 0f), Color.Green),
                     new Vertex(new Vector(0f, .133f), Color.Blue)
                 }, material);
-                triangle.Rotate(GetRandomFloat(random));
-                triangle.Move(new Vector(GetRandomFloat(random, -1, 1), GetRandomFloat(random, -1, 1)));
+                triangle.Transform.Rotate(GetRandomFloat(random));
+                triangle.Transform.Move(new Vector(GetRandomFloat(random, -1, 1), GetRandomFloat(random, -1, 1)));
                 scene.Add(triangle);
             }
         }
@@ -44,40 +46,48 @@ namespace SharpEngine
         
             
             // engine rendering loop
-            var direction = new Vector(0.0003f, 0.0003f);
-            var multiplier = 0.999f;
-            var rotation = 0.0005f;
+            var direction = new Vector(0.001f, 0.001f);
+            var multiplier = 0.95f;
+            var rotation = 0.05f;
+            const int fixedStepNumberPerSeconds=30;
+            const double fixedStepDuration = 1.0 / fixedStepNumberPerSeconds;
+            double previousFixedStep = 0.0;
             while (window.IsOpen()) 
             {
-
-                // Update Triangles
-                for (var i = 0; i < scene.triangles.Count; i++) {
-                    var triangle = scene.triangles[i];
+                if (Glfw.Time> previousFixedStep+ fixedStepDuration)
+                {
+                    previousFixedStep = Glfw.Time;
+                    for (var i = 0; i < scene.triangles.Count; i++) {
+                        var triangle = scene.triangles[i];
                 
-                    // 2. Keep track of the Scale, so we can reverse it
-                    if (triangle.CurrentScale <= 0.5f) {
-                        multiplier = 1.001f;
-                    }
-                    if (triangle.CurrentScale >= 1f) {
-                        multiplier = 0.999f;
-                    }
+                        // 2. Keep track of the Scale, so we can reverse it
+                        if (triangle.Transform.CurrentScale.x <= 0.5f) {
+                            multiplier = 1.001f;
+                        }
+                        if (triangle.Transform.CurrentScale.x >= 1f) {
+                            multiplier = 0.999f;
+                        }
                     
-                    triangle.Scale(multiplier);
-                    triangle.Rotate(rotation);
+                        triangle.Transform.Scale(multiplier);
+                        triangle.Transform.Rotate(rotation);
                 
-                    // 4. Check the X-Bounds of the Screen
-                    if (triangle.GetMaxBounds().x >= 1 && direction.x > 0 || triangle.GetMinBounds().x <= -1 && direction.x < 0) {
-                        direction.x *= -1;
-                    }
+                        // 4. Check the X-Bounds of the Screen
+                        if (triangle.GetMaxBounds().x >= 1 && direction.x > 0 || triangle.GetMinBounds().x <= -1 && direction.x < 0) {
+                            direction.x *= -1;
+                        }
                 
-                    // 5. Check the Y-Bounds of the Screen
-                    if (triangle.GetMaxBounds().y >= 1 && direction.y > 0 || triangle.GetMinBounds().y <= -1 && direction.y < 0) {
-                        direction.y *= -1;
+                        // 5. Check the Y-Bounds of the Screen
+                        if (triangle.GetMaxBounds().y >= 1 && direction.y > 0 || triangle.GetMinBounds().y <= -1 && direction.y < 0) {
+                            direction.y *= -1;
+                        }
+                    
+                    
+                        triangle.Transform.Move(direction);
                     }
-                    
-                    
-                    triangle.Move(direction);
                 }
+                Console.WriteLine(Glfw.Time);
+                // Update Triangles
+                
                 
                 window.Render();
             }
