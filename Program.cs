@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 using GLFW;
 
 namespace SharpEngine
@@ -31,48 +32,37 @@ namespace SharpEngine
             // engine rendering loop
             const int fixedStepNumberPerSecond = 30;
             const float fixedDeltaTime = 1.0f / fixedStepNumberPerSecond;
+            const float movementSpeed = 0.5f;
             double previousFixedStep = 0.0;
-            float movementSpeed = 0.5f;
             while (window.IsOpen()) {
-                while (Glfw.Time > previousFixedStep + fixedDeltaTime)
-                {
+                while (Glfw.Time > previousFixedStep + fixedDeltaTime) {
                     previousFixedStep += fixedDeltaTime;
-
                     var walkDirection = new Vector();
-                    if (window.GetKey(Keys.W))
-                    {
-                        walkDirection += new Vector(0, 1);
+                    if (window.GetKey(Keys.W)) {
+                        walkDirection += shape.Transform.Forward;
                     }
-
-                    if (window.GetKey(Keys.S))
-                    {
-                        walkDirection += new Vector(0, -1);
+                    if (window.GetKey(Keys.S)) {
+                        walkDirection += shape.Transform.Backward;
                     }
-
-                    if (window.GetKey(Keys.A))
-                    {
-                        walkDirection += new Vector(-1, 0);
+                    if (window.GetKey(Keys.A)) {
+                        walkDirection += shape.Transform.Left;
                     }
-
-                    if (window.GetKey(Keys.D))
-                    {
-                        walkDirection += new Vector(1, 0);
+                    if (window.GetKey(Keys.D)) {
+                        walkDirection += shape.Transform.Right;
                     }
-                    if (window.GetKey(Keys.Q))
-                    {
+                    if (window.GetKey(Keys.Q)) {
                         var rotation = shape.Transform.Rotation;
-                        rotation.z += 2*MathF.PI*fixedDeltaTime;
+                        rotation.z += MathF.PI * fixedDeltaTime;
                         shape.Transform.Rotation = rotation;
                     }
-                    if (window.GetKey(Keys.E))
-                    {
+                    if (window.GetKey(Keys.E)) {
                         var rotation = shape.Transform.Rotation;
-                        rotation.z -= 2*MathF.PI*fixedDeltaTime;
+                        rotation.z -= MathF.PI * fixedDeltaTime;
                         shape.Transform.Rotation = rotation;
                     }
 
                     walkDirection = walkDirection.Normalize();
-                    shape.Transform.Position += walkDirection * movementSpeed*fixedDeltaTime;
+                    shape.Transform.Position += walkDirection * movementSpeed * fixedDeltaTime;
                 }
                 window.Render();
             }
