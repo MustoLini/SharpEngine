@@ -1,2 +1,2 @@
 # SharpEngine
- A small Game engine in C#
+ A small Game Engine written in C#
