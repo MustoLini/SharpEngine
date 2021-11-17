@@ -30,13 +30,21 @@ namespace SharpEngine
             scene.Add(rectangle);
             
             var circle = new Circle(material);
-            circle.Transform.Position = new Vector(0.2f, 0f);
+            circle.Transform.Position = Vector.Left;
+            circle.velocity = Vector.Right * 0.3f;
             scene.Add(circle);
+            
+            var square = new Rectangle(material);
+            square.Transform.Position = Vector.Left+ Vector.Backward *0.2f;
+            square.linearForce = Vector.Right * 0.3f;
+            square.Mass = 2f;
+            scene.Add(square);
             
 
             var ground = new Rectangle(material);
             ground.Transform.CurrentScale = new Vector(10f, 1f, 1f);
             ground.Transform.Position = new Vector(0f, -1f);
+            ground.gravityScale = 0f;
             scene.Add(ground);
 
             // engine rendering loop

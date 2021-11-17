@@ -3,19 +3,19 @@ using System.Collections.Generic;
 namespace SharpEngine {
 	public class Scene {
 
-		public List<Shape> triangles;
+		public List<Shape> Shapes;
 
 		public Scene() {
-			triangles = new List<Shape>();
+			Shapes = new List<Shape>();
 		}
 		
 		public void Add(Shape shape) {
-			triangles.Add(shape);
+			Shapes.Add(shape);
 		}
 
 		public void Render() {
-			for (int i = 0; i < this.triangles.Count; i++) {
-				triangles[i].Render();
+			for (int i = 0; i < this.Shapes.Count; i++) {
+				Shapes[i].Render();
 			}
 		}
 	}

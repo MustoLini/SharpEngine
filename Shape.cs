@@ -7,10 +7,23 @@ namespace SharpEngine {
 		Vertex[] vertices;
 		uint vertexArray;
 		uint vertexBuffer;
-
+		float mass;
+		float massInverse;
+		public float Mass {
+			get => this.mass;
+			set {
+				this.mass = value;
+				this.massInverse = float.IsPositiveInfinity(value) ? 0f : 1f / value;
+			}
+		}
+		public float MassInverse => this.massInverse;
+        
+		public float gravityScale = 1f;
+		public Vector velocity; // momentum = product of velocity and mass
+		public Vector linearForce;
 		public Transform Transform { get; }
 		public Material material;
-		public Vector velocity;
+		
             
 		public Shape(Vertex[] vertices, Material material) {
 			this.vertices = vertices;
