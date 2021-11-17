@@ -10,12 +10,19 @@ namespace SharpEngine {
 
 		public Transform Transform { get; }
 		public Material material;
+		public Vector velocity;
             
 		public Shape(Vertex[] vertices, Material material) {
 			this.vertices = vertices;
 			this.material = material;
 			LoadTriangleIntoBuffer();
 			this.Transform = new Transform();
+		}
+
+		public void SetColor(Color color) {
+			for (int i = 0; i < this.vertices.Length; i++) {
+				vertices[i].color = color;
+			}
 		}
 		
 		 void LoadTriangleIntoBuffer() {
