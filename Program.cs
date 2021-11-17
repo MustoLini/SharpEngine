@@ -21,31 +21,27 @@ namespace SharpEngine
             var physics = new Physics(scene);
             window.Load(scene);
 
-            var shape = new Triangle(material);
-            shape.Transform.CurrentScale = new Vector(0.5f, 1f, 1f);
-            shape.Transform.Position = new Vector(0f, 0.5f);
-            scene.Add(shape);
-            
-            var rectangle = new Rectangle(material);
-            scene.Add(rectangle);
-            
             var circle = new Circle(material);
             circle.Transform.Position = Vector.Left;
             circle.velocity = Vector.Right * 0.3f;
             scene.Add(circle);
             
-            var square = new Rectangle(material);
-            square.Transform.Position = Vector.Left+ Vector.Backward *0.2f;
-            square.linearForce = Vector.Right * 0.3f;
-            square.Mass = 2f;
-            scene.Add(square);
+            // var square = new Rectangle(material);
+            // square.Transform.Position = Vector.Left + Vector.Backward * 0.2f;
+            // square.linearForce = Vector.Right * 0.3f;
+            // square.Mass = 4f;
+            // scene.Add(square);
             
-
-            var ground = new Rectangle(material);
-            ground.Transform.CurrentScale = new Vector(10f, 1f, 1f);
-            ground.Transform.Position = new Vector(0f, -1f);
-            ground.gravityScale = 0f;
-            scene.Add(ground);
+            var circle2 = new Circle(material);
+            circle2.Transform.Position = Vector.Right * 0.5f + Vector.Down * 0.1f;
+            scene.Add(circle2);
+            
+            // var ground = new Rectangle(material);
+            // ground.Transform.CurrentScale = new Vector(10f, 1f, 1f);
+            // ground.Transform.Position = new Vector(0f, -1f);
+            // ground.Mass = float.PositiveInfinity;
+            // ground.gravityScale = 0f;
+            // scene.Add(ground);
 
             // engine rendering loop
             const int fixedStepNumberPerSecond = 30;
@@ -56,46 +52,6 @@ namespace SharpEngine
                 while (Glfw.Time > previousFixedStep + fixedDeltaTime) {
                     previousFixedStep += fixedDeltaTime;
                     physics.Update(fixedDeltaTime);
-                
-                    // var walkDirection = new Vector();
-                    // if (window.GetKey(Keys.W)) {
-                    //     walkDirection += shape.Transform.Forward;
-                    // }
-                    // if (window.GetKey(Keys.S)) {
-                    //     walkDirection += shape.Transform.Backward;
-                    // }
-                    // if (window.GetKey(Keys.A)) {
-                    //     walkDirection += shape.Transform.Left;
-                    // }
-                    // if (window.GetKey(Keys.D)) {
-                    //     walkDirection += shape.Transform.Right;
-                    // }
-                    // if (window.GetKey(Keys.Q)) {
-                    //     var rotation = shape.Transform.Rotation;
-                    //     rotation.z += MathF.PI * fixedDeltaTime;
-                    //     shape.Transform.Rotation = rotation;
-                    // }
-                    // if (window.GetKey(Keys.E)) {
-                    //     var rotation = shape.Transform.Rotation;
-                    //     rotation.z -= MathF.PI * fixedDeltaTime;
-                    //     shape.Transform.Rotation = rotation;
-                    // }
-                    //
-                    // walkDirection = walkDirection.Normalize();
-                    // shape.Transform.Position += walkDirection * movementSpeed * fixedDeltaTime;
-                    //
-                    // float direction = Vector.Dot((rectangle.GetCenter() - shape.GetCenter()).Normalize(), shape.Transform.Forward);
-                    // bool doesThePlayerFaceTheRectangle = direction > 0;
-                    // if (doesThePlayerFaceTheRectangle) {
-                    //     rectangle.SetColor(Color.Green);
-                    // } else {
-                    //     rectangle.SetColor(Color.Red);
-                    // }
-                    //
-                    // float dotProduct = Vector.Dot((circle.GetCenter() - shape.GetCenter()).Normalize(), shape.Transform.Forward);
-                    // float angle = MathF.Acos(dotProduct);
-                    // float factor = angle / MathF.PI;
-                    // circle.SetColor(new Color(factor, factor, factor, 1));
                 }
                 window.Render();
             }
