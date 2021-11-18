@@ -32,7 +32,7 @@ namespace SharpEngine {
 					Circle other = this.scene.shapes[j] as Circle;
 					// check for collision
 					Vector deltaPosition = other.GetCenter() - shape.GetCenter();
-					bool collision = deltaPosition.GetSquareMagnitude() <= (shape.Radius + other.Radius) * (shape.Radius + other.Radius);
+					bool collision = deltaPosition.GetMagnitude() <= (shape.Radius + other.Radius)* (shape.Radius + other.Radius);
 
 					if (collision) {
 						Vector collisionNormal = deltaPosition.Normalize();
